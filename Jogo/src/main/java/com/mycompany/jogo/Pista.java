@@ -12,7 +12,7 @@ public class Pista {
         this.descricao = descricao;
         this.tipo = tipo;
         this.importancia = importancia;
-        this.analisada = false;
+        this.analisada = analisada;
     }
 
     public int getId() {
