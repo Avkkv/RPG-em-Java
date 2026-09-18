@@ -31,6 +31,13 @@ public class Jogo {
                 70,
                 true
         );
+        
+        Pista pista1 = new Pista(
+                1,
+                "Recibo encontrado no posto central.",
+                "Documento",
+                8
+        );
 
         System.out.println("=== INVESTIGADOR ===");
         investigador.mostrarStatus();
@@ -45,5 +52,12 @@ public class Jogo {
         investigador.atacar(suspeito);
 
         System.out.println("Vida de Ricardo: " + suspeito.getVida());
+        
+        System.out.println("=== PISTA ===");
+        pista1.mostrarPista();
+        System.out.println("\n=== ANALISANDO ===");
+        pista1.analisar();
+        System.out.println("\n=== DEPOIS DA ANÁLISE ===");
+        pista1.mostrarPista();
     }
 }
