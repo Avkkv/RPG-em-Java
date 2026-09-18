@@ -36,5 +36,13 @@ public class Suspeito extends Personagem {
         return culpado;
     }
     
-    
+    public void diminuirResistencia(int valor) {
+        if (valor > 0) {
+            resistencia -= valor;
+
+            if (resistencia < 0) {
+                resistencia = 0;
+            }
+        }
+    }
 }
