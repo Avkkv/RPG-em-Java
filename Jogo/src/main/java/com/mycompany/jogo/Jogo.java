@@ -40,6 +40,14 @@ public class Jogo {
                 false
         );
 
+        Pista pista2 = new Pista(
+                2,
+                "Fotografia mostrando Ricardo próximo à estação.",
+                "Fotografia",
+                10,
+                false
+        );
+
         System.out.println("=== INVESTIGADOR ===");
         investigador.mostrarStatus();
 
@@ -54,11 +62,11 @@ public class Jogo {
 
         System.out.println("Vida de Ricardo: " + suspeito.getVida());
 
-        System.out.println("=== PISTA ===");
-        pista1.mostrarPista();
-        System.out.println("\n=== ANALISANDO ===");
         pista1.analisar();
-        System.out.println("\n=== DEPOIS DA ANÁLISE ===");
-        pista1.mostrarPista();
+        investigador.adicionarPista(pista1);
+        investigador.adicionarPista(pista2);
+
+        Combate combate = new Combate(investigador, suspeito);
+        combate.iniciar();
     }
 }
