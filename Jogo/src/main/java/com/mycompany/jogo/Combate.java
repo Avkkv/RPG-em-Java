@@ -2,7 +2,6 @@ package com.mycompany.jogo;
 
 import com.mycompany.jogo.personagens.Investigador;
 import com.mycompany.jogo.personagens.Suspeito;
-import com.mycompany.jogo.Pista;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -15,11 +14,13 @@ public class Combate {
     private boolean combateAtivo;
 
     private Random random;
+    private Scanner scanner;
 
-    public Combate(Investigador investigador, Suspeito suspeito) {
+    public Combate(Investigador investigador, Suspeito suspeito, Scanner scanner) {
 
         this.investigador = investigador;
         this.suspeito = suspeito;
+        this.scanner = scanner;
 
         this.rodada = 1; // Em qual turno o jogador está
         this.combateAtivo = false; // Controla se o interrogatório continua
@@ -158,21 +159,30 @@ public class Combate {
         combateAtivo = false;
 
         System.out.println("\n================================");
+        System.out.println("       FIM DO INTERROGATÓRIO");
+        System.out.println("================================");
 
         if (!investigador.estaVivo()) {
-            System.out.println("Você perdeu o interrogatório.");
+            System.out.println("O suspeito venceu o interrogatório!");
         } else if (suspeito.getResistencia() <= 0) {
-            System.out.println("Interrogatório concluído!");
+            System.out.println("O investigador venceu o interrogatório!");
         } else {
-            System.out.println("Você encerrou o interrogatório.");
+            System.out.println("O interrogatório foi encerrado.");
+            System.out.println("Não houve vencedor.");
         }
 
-        System.out.println("================================");
+        System.out.println("\n--- STATUS FINAL ---");
+
+        System.out.println("\nInvestigador: " + investigador.getNome());
+        System.out.println("Vida: " + investigador.getVida() + "/" + investigador.getVidaMaxima());
+
+        System.out.println("\nSuspeito: " + suspeito.getNome());
+        System.out.println("Resistência: " + suspeito.getResistencia());
+
+        System.out.println("\n================================");
     }
 
     public void iniciar() {
-
-        Scanner scanner = new Scanner(System.in);
 
         combateAtivo = true;
         rodada = 1;
@@ -224,7 +234,7 @@ public class Combate {
 
                     break;
                 case 5:
-                    combateAtivo = false;
+                    finalizar();
                     break;
                 default:
                     System.out.println("Opção inválida.");

@@ -3,9 +3,14 @@ package com.mycompany.jogo;
 import com.mycompany.jogo.personagens.Investigador;
 import com.mycompany.jogo.personagens.Suspeito;
 
+import java.util.Scanner;
+
 public class Jogo {
 
     public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
         Investigador investigador = new Investigador(
                 "Alexandre",
                 100,
@@ -32,41 +37,10 @@ public class Jogo {
                 true
         );
 
-        Pista pista1 = new Pista(
-                1,
-                "Recibo encontrado no posto central.",
-                "Documento",
-                8,
-                false
-        );
+        Investigacao investigacao = new Investigacao("CASO 47");
+        
+        investigacao.iniciar(investigador, suspeito, scanner);
 
-        Pista pista2 = new Pista(
-                2,
-                "Fotografia mostrando Ricardo próximo à estação.",
-                "Fotografia",
-                10,
-                false
-        );
-
-        System.out.println("=== INVESTIGADOR ===");
-        investigador.mostrarStatus();
-
-        System.out.println("\n=== SUSPEITO ===");
-        suspeito.mostrarStatus();
-
-        System.out.println("\nRicardo está vivo?");
-        System.out.println(suspeito.estaVivo());
-
-        System.out.println("\nInvestigador ataca Ricardo!");
-        investigador.atacar(suspeito);
-
-        System.out.println("Vida de Ricardo: " + suspeito.getVida());
-
-        pista1.analisar();
-        investigador.adicionarPista(pista1);
-        investigador.adicionarPista(pista2);
-
-        Combate combate = new Combate(investigador, suspeito);
-        combate.iniciar();
+        scanner.close();
     }
 }

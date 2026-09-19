@@ -92,4 +92,23 @@ public class Investigador extends Personagem {
 
         return null;
     }
+
+    public void analisarPista(int numero) {
+
+        Pista pista = getPista(numero);
+
+        if (pista == null) {
+            System.out.println("Pista inválida.");
+            return;
+        }
+
+        if (pista.isAnalisada()) {
+            System.out.println("Esta pista já foi analisada.");
+            return;
+        }
+
+        pista.analisar();
+
+        System.out.println("Pista " + numero + " analisada com sucesso!");
+    }
 }
