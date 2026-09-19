@@ -4,13 +4,13 @@
 
 **O Caso 47** é um RPG investigativo desenvolvido em Java para ser executado pelo terminal.
 
-O jogador assume o papel de um investigador responsável por solucionar um caso misterioso. Em vez de utilizar apenas combates físicos, o jogo utiliza **interrogatórios, investigação e apresentação de evidências** como principal forma de confronto.
+O jogador assume o papel de um investigador responsável por solucionar um caso misterioso. Em vez de utilizar apenas combates físicos, o jogo utiliza **interrogatórios, investigação e apresentação de evidências** como principal forma de confronto. O andamento da investigação é controlado diretamente pelo jogador através de um menu no terminal.
 
 Durante o jogo, o investigador encontra e analisa pistas, interage com suspeitos e utiliza seus atributos para aumentar suas chances de sucesso durante os interrogatórios. O sistema de combate utiliza o `Random` para introduzir aleatoriedade nos resultados.
 
 A proposta do jogo é fazer com que o jogador não apenas avance por combates, mas precise **interpretar informações e conectar pistas para descobrir a verdade por trás do Caso 47**.
 
-> **Observação:** algumas funcionalidades da proposta, como o sistema completo de investigação, conclusão do caso e múltiplos finais, ainda serão desenvolvidas.
+> **Observação:** funcionalidades como recompensas completas, conclusão do caso, sistema de dedução e múltiplos finais ainda serão desenvolvidas.
 
 ---
 
@@ -25,19 +25,25 @@ Início do jogo
 Criar Investigador
       |
       v
-Investigar locais
+Criar Investigacao
       |
       v
-Encontrar pistas
+Menu de Investigação
+      |
+      +-------------------------------+
+      |               |               |
+      v               v               v
+Investigar        Ver/Analisar     Ver progresso
+  local              pistas
       |
       v
-Analisar e armazenar pistas
+Encontrar pista
       |
       v
-Encontrar Suspeitos
+Adicionar ao Investigador
       |
       v
-Iniciar interrogatório
+Interrogar Suspeito
       |
       v
 Escolher ações durante o combate
@@ -81,6 +87,7 @@ src/
 ├── com.mycompany.jogo/
 │   ├── Pista.java
 │   ├── Combate.java
+│   ├── Investigacao.java
 │   └── Jogo.java
 │
 └── com.mycompany.jogo.personagens/
@@ -105,15 +112,22 @@ src/
             Pista
 
 Investigador -------- Combate -------- Suspeito
-                          |
-                          |
-                       utiliza
-                          |
-                          v
-                         Pista
+       ^                  |
+       |                  |
+       |                utiliza
+       |                  |
+       |                  v
+       |                 Pista
+       |
+  Investigacao
+       |
+       +---- controla locais
+       +---- descobre pistas
+       +---- controla progresso
+       +---- controla menu
 ```
 
-A classe `Personagem` serve como base para `Investigador` e `Suspeito`. A classe `Pista` é independente, mas pode ser armazenada pelo investigador e utilizada durante os interrogatórios. A classe `Combate` coordena o confronto entre investigador e suspeito.
+A classe `Personagem` serve como base para `Investigador` e `Suspeito`. A classe `Pista` é independente, mas pode ser armazenada pelo investigador e utilizada durante os interrogatórios. A classe `Investigacao` controla o fluxo do caso, os locais, o progresso e a descoberta das pistas. A classe `Combate` coordena o confronto entre investigador e suspeito.
 
 ---
 
@@ -121,9 +135,11 @@ A classe `Personagem` serve como base para `Investigador` e `Suspeito`. A classe
 
 O projeto deve ser executado pela classe `Jogo`.
 
-A classe `Jogo` será responsável por criar os objetos necessários e iniciar o fluxo do jogo.
+Atualmente, `Jogo` cria o `Scanner`, instancia o `Investigador`, o `Suspeito` e a `Investigacao`, e inicia a partida chamando `iniciar()` da investigação.
 
-Durante o desenvolvimento, ela também pode ser utilizada para testar individualmente as classes e suas interações.
+A partir desse ponto, o jogador controla o andamento do jogo pelo terminal.
+
+Durante o desenvolvimento, `Jogo` também pode ser utilizado para testar individualmente as classes e suas interações.
 
 
 ---
@@ -215,6 +231,9 @@ Retorna a quantidade de pistas armazenadas.
 
 mostrarPistas():
 Exibe no terminal as pistas que o investigador possui.
+
+analisarPista(int numero):
+Localiza uma pista pelo número e chama o método de análise da pista.
 
 getPista(int numero):
 Retorna uma pista específica de acordo com o número escolhido.
@@ -308,11 +327,70 @@ Exibe todas as informações da pista.
 
 Além disso, a classe possui getters para seus atributos.
 
-Uma pista é criada inicialmente como **não analisada**.
+Uma pista é criada inicialmente como **não analisada**. O jogador pode escolher a opção de análise no menu de investigação; depois disso, a pista pode ser apresentada como evidência durante um interrogatório.
 
 ---
 
-## 5. Combate
+## 5. Investigacao
+
+**Arquivo:** `Investigacao.java`
+
+**Pacote:** `com.mycompany.jogo`
+
+`Investigacao` controla o fluxo principal do caso e permite que o jogador conduza a investigação diretamente pelo terminal.
+
+### Atributos
+
+```text
+nomeCaso                     -> nome da investigação
+progresso                    -> percentual de avanço do caso
+locais[]                     -> locais disponíveis para investigação
+locaisInvestigados[]         -> indica quais locais já foram investigados
+quantidadeLocaisInvestigados -> quantidade de locais já investigados
+casoResolvido                -> informa se o caso foi marcado como resolvido
+```
+
+### Métodos
+
+```text
+mostrarProgresso():
+Exibe o progresso atual do caso.
+
+mostrarLocais():
+Exibe os locais disponíveis e indica quais já foram investigados.
+
+investigarLocal(int numeroLocal, Investigador investigador):
+Investiga o local selecionado, impede investigação repetida e cria a pista correspondente.
+
+criarPistaDoLocal(...):
+Cria a pista associada ao local investigado e a adiciona ao investigador.
+
+atualizarProgresso():
+Atualiza o percentual de locais investigados.
+
+resolverCaso():
+Marca o caso como resolvido e define o progresso como 100%.
+
+iniciar(Investigador investigador, Suspeito suspeito, Scanner scanner):
+Controla o menu principal da investigação e permite ao jogador investigar locais, consultar e analisar pistas, acompanhar o progresso e iniciar interrogatórios.
+```
+
+### Menu de investigação
+
+```text
+1 - Investigar um local
+2 - Ver pistas
+3 - Analisar uma pista
+4 - Ver progresso
+5 - Interrogar suspeito
+6 - Sair
+```
+
+A classe `Investigacao` utiliza o mesmo `Scanner` recebido pelo método `iniciar()` e o repassa para `Combate`.
+
+---
+
+## 6. Combate
 
 **Arquivo:** `Combate.java`
 
@@ -478,9 +556,13 @@ Dessa forma, o mesmo interrogatório pode ter resultados diferentes em partidas 
 
 As pistas são parte central da proposta do jogo.
 
-O fluxo planejado é:
+Na versão atual, as pistas são descobertas quando o jogador investiga determinados locais. Depois de encontradas, são armazenadas pelo investigador e precisam ser analisadas antes de serem utilizadas como evidência.
+
+O fluxo atual é:
 
 ```text
+Investigar local
+      ↓
 Encontrar pista
       ↓
 Criar objeto Pista
@@ -494,7 +576,7 @@ Utilizar como evidência
 Confrontar suspeito
 ```
 
-O investigador pode consultar as pistas armazenadas antes ou durante um interrogatório.
+O jogador pode consultar e analisar as pistas pelo menu de investigação. Uma pista não analisada não pode ser apresentada como evidência durante o interrogatório.
 
 Exemplo:
 
@@ -587,6 +669,32 @@ Também está prevista a possibilidade de diferentes finais de acordo com as evi
 
 ---
 
+# Fluxo Atual de Jogabilidade
+
+A versão atual já permite um primeiro ciclo de investigação:
+
+```text
+1. Iniciar o jogo
+        ↓
+2. Abrir menu de investigação
+        ↓
+3. Investigar um local
+        ↓
+4. Encontrar uma pista
+        ↓
+5. Consultar as pistas
+        ↓
+6. Analisar uma pista
+        ↓
+7. Interrogar um suspeito
+        ↓
+8. Apresentar uma pista analisada
+        ↓
+9. Encerrar o interrogatório
+        ↓
+10. Voltar ao menu de investigação
+```
+
 # Estado Atual do Projeto
 
 Até o momento, já foram estruturadas as seguintes partes:
@@ -603,7 +711,10 @@ Até o momento, já foram estruturadas as seguintes partes:
 [✓] Uso de Random
 [✓] Resistência do Suspeito
 [✓] Uso de pistas no interrogatório
-[ ] Sistema completo de investigação
+[✓] Menu de investigação pelo terminal
+[✓] Investigação de locais
+[✓] Descoberta automática de pistas durante a investigação
+[✓] Análise de pistas
 [ ] Recompensas
 [ ] Sistema completo de experiência e níveis
 [ ] História completa
