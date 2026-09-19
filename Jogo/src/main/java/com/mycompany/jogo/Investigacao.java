@@ -73,6 +73,7 @@ public class Investigacao {
         System.out.println("======================");
     }
 
+    private static final int XP_POR_INVESTIGAR = 30;
     public void investigarLocal(int numeroLocal, Investigador investigador) {
 
         if (numeroLocal < 1 || numeroLocal > locais.length) {
@@ -95,6 +96,9 @@ public class Investigacao {
         criarPistaDoLocal(indice, investigador);
 
         atualizarProgresso();
+        
+        System.out.println("Exp: "+ XP_POR_INVESTIGAR);
+        investigador.ganharExperiencia(XP_POR_INVESTIGAR);
     }
 
     private void criarPistaDoLocal(int indice, Investigador investigador) {

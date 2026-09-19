@@ -5,6 +5,7 @@ import com.mycompany.jogo.personagens.Suspeito;
 
 import java.util.Random;
 import java.util.Scanner;
+import javax.lang.model.element.Modifier;
 
 public class Combate {
     private Investigador investigador;
@@ -153,7 +154,9 @@ public class Combate {
             investigador.receberDano(5);
         }
     }
-
+    
+    private static final int XP_POR_VITORIA = 15; // Quantidade de Experiencia ganha por Vitoria
+    
     private void finalizar() {
 
         combateAtivo = false;
@@ -166,6 +169,9 @@ public class Combate {
             System.out.println("O suspeito venceu o interrogatório!");
         } else if (suspeito.getResistencia() <= 0) {
             System.out.println("O investigador venceu o interrogatório!");
+            
+            investigador.ganharExperiencia(XP_POR_VITORIA);
+            System.out.println("Exp: "+ XP_POR_VITORIA);
         } else {
             System.out.println("O interrogatório foi encerrado.");
             System.out.println("Não houve vencedor.");
@@ -181,7 +187,7 @@ public class Combate {
 
         System.out.println("\n================================");
     }
-
+    
     public void iniciar() {
 
         combateAtivo = true;

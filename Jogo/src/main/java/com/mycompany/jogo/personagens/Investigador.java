@@ -8,6 +8,8 @@ public class Investigador extends Personagem {
     private int observacao;
     private int experiencia;
 
+    private int proximoNivelXp = 100;
+
     private static final int MAX_PISTAS = 20;
     private Pista[] pistas; // O investigador possui um conjunto de objetos do tipo Pista
     private int quantidadePistas;
@@ -42,6 +44,13 @@ public class Investigador extends Personagem {
     
     public void ganharExperiencia(int experiencia) {
         this.experiencia += experiencia;
+        
+        while(this.experiencia >= this.proximoNivelXp){ // Verifica se o personagem ja pode subir de nivel com o xp ganho
+            this.aumentarNivel();
+            
+            this.experiencia = this.experiencia - proximoNivelXp; // remove a experiencia já utilizada para subior de nivel      
+            proximoNivelXp = proximoNivelXp + ((getNivel() / 2) *20); // almenta a experiencia necessaria para subir de nivel com base
+        }                                                             // no nivel almentando em 20, 20, 40, 40, 60, 60 ...
     }
 
     // Adiciona uma nova pista ao investigador
@@ -93,6 +102,8 @@ public class Investigador extends Personagem {
         return null;
     }
 
+    
+    private static final int XP_POR_ANALISE = 5; // Experiencia base ganha por analisar uma pista
     public void analisarPista(int numero) {
 
         Pista pista = getPista(numero);
@@ -110,5 +121,9 @@ public class Investigador extends Personagem {
         pista.analisar();
 
         System.out.println("Pista " + numero + " analisada com sucesso!");
+        
+        ganharExperiencia(pista.getImportancia() * XP_POR_ANALISE);
+        System.out.println("Exp: "+ XP_POR_ANALISE * pista.getImportancia());
+                
     }
 }
