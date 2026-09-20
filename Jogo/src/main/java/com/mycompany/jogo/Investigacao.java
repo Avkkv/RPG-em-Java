@@ -112,7 +112,9 @@ public class Investigacao {
                     "Registro antigo do Caso 47 encontrado nos arquivos da delegacia.",
                     "Documento",
                     7,
-                    false
+                    "O registro mostra que o caso foi arquivado após inconsistências "
+                    + "na linha do tempo dos depoimentos. Há uma referência ao horário 23:47.",
+                    "Ricardo, como você explica estar na estação às 23:47?"
                 );
 
                 break;
@@ -123,7 +125,9 @@ public class Investigacao {
                     "Recibo encontrado no posto central na noite do desaparecimento.",
                     "Documento",
                     8,
-                    false
+                    "O recibo registra um abastecimento às 23:32, "
+                    + "horário próximo ao desaparecimento.",
+                    "O que explica você abastecer o carro naquele horário justamente ao lado do desaparecimento?"
                 );
 
                 break;
@@ -135,7 +139,9 @@ public class Investigacao {
                     "Fotografia mostrando uma pessoa próxima à estação.",
                     "Fotografia",
                     10,
-                    false
+                    "A análise da fotografia revela uma segunda pessoa ao fundo, "
+                    + "próxima à entrada da estação. O rosto não está visível.",
+                    "Você conhece essa pessoa da foto?"
                 );
 
                 break;

@@ -5,11 +5,12 @@ import com.mycompany.jogo.personagens.Suspeito;
 
 import java.util.Random;
 import java.util.Scanner;
-import javax.lang.model.element.Modifier;
+import javax.lang.model.element.Modifier; // Não utilizada
 
 public class Combate {
     private Investigador investigador;
     private Suspeito suspeito;
+    private Pista pistaEspecial;
 
     private int rodada;
     private boolean combateAtivo;
@@ -21,6 +22,7 @@ public class Combate {
 
         this.investigador = investigador;
         this.suspeito = suspeito;
+        this.pistaEspecial = null;
         this.scanner = scanner;
 
         this.rodada = 1; // Em qual turno o jogador está
@@ -136,6 +138,11 @@ public class Combate {
             return;
         }
 
+        if (suspeito.possuiContradicao(pista)) {
+            System.out.println("\nA evidência parece entrar em conflito com o depoimento do suspeito.");
+            System.out.println("Você desbloqueou uma pergunta especial!");
+        }
+
         int chance = 60
                 + investigador.getInvestigacao()
                 + pista.getImportancia()
@@ -149,10 +156,39 @@ public class Combate {
         if (testarChance(chance)) {
             System.out.println("O suspeito entrou em contradição!");
             suspeito.diminuirResistencia(25);
-        } else {
-            System.out.println("O suspeito conseguiu responder à evidência.");
-            investigador.receberDano(5);
+
+            if (suspeito.possuiContradicao(pista)) {
+                pistaEspecial = pista;
+                System.out.println("\nNova pergunta especial desbloqueada!");
+            } else {
+                System.out.println("O suspeito conseguiu responder à evidência.");
+                investigador.receberDano(5);
+            }
         }
+    }
+
+    public void fazerPerguntaEspecial() {
+
+        if (pistaEspecial == null) {
+            System.out.println("\nNenhuma pergunta especial foi desbloqueada.");
+            return;
+        }
+
+        System.out.println("\n================================");
+        System.out.println("        PERGUNTA ESPECIAL");
+        System.out.println("================================");
+
+        System.out.println("\nVocê pergunta:");
+        System.out.println(pistaEspecial.getPerguntaDesbloqueada());
+
+        System.out.println("\nRicardo fica em silêncio por alguns segundos...");
+        System.out.println(suspeito.getContradicao());
+
+        suspeito.diminuirResistencia(20);
+
+        pistaEspecial = null;
+
+        System.out.println("\nA resistência do suspeito diminuiu!");
     }
     
     private static final int XP_POR_VITORIA = 15; // Quantidade de Experiencia ganha por Vitoria
@@ -204,7 +240,8 @@ public class Combate {
             System.out.println("2 - Pressionar");
             System.out.println("3 - Observar");
             System.out.println("4 - Apresentar pista");
-            System.out.println("5 - Sair");
+            if (pistaEspecial != null) System.out.println("5 - Fazer pergunta especial");
+            System.out.println("6 - Sair");
 
             System.out.print("Opção: ");
 
@@ -240,6 +277,9 @@ public class Combate {
 
                     break;
                 case 5:
+                    fazerPerguntaEspecial();
+                    break;
+                case 6:
                     finalizar();
                     break;
                 default:
