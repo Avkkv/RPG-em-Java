@@ -1,6 +1,7 @@
 package com.mycompany.jogo.personagens;
 
 import com.mycompany.jogo.Pista;
+import com.mycompany.jogo.Recompensa;
 
 public class Suspeito extends Personagem {
     private String profissao;
@@ -11,11 +12,14 @@ public class Suspeito extends Personagem {
 
     private int pistaContradicaoId;
     private String contradicao;
+
+    private String motivo;
+    private Recompensa recompensa;
     
     public Suspeito (String nome, int vida, int vidaMaxima, int nivel,
                     int ataque, int defesa, String profissao, String depoimento,
                     int resistencia, int inteligencia, boolean culpado,
-                    int pistaContradicaoId, String contradicao) {
+                    int pistaContradicaoId, String contradicao, String motivo, Recompensa recompensa) {
         
         super(nome, vida, vidaMaxima, nivel, ataque, defesa);
         
@@ -27,6 +31,9 @@ public class Suspeito extends Personagem {
 
         this.pistaContradicaoId = pistaContradicaoId;
         this.contradicao = contradicao;
+
+        this.motivo = motivo;
+        this.recompensa = recompensa;
     }
 
     public String getProfissao() {
@@ -49,6 +56,12 @@ public class Suspeito extends Personagem {
     }
     public String getContradicao() {
         return contradicao;
+    }
+    public String getMotivo() {
+        return motivo;
+    }
+    public Recompensa getRecompensa() {
+        return recompensa;
     }
     
     public void diminuirResistencia(int valor) {

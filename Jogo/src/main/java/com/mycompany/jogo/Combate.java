@@ -5,7 +5,6 @@ import com.mycompany.jogo.personagens.Suspeito;
 
 import java.util.Random;
 import java.util.Scanner;
-import javax.lang.model.element.Modifier; // Não utilizada
 
 public class Combate {
     private Investigador investigador;
@@ -138,11 +137,6 @@ public class Combate {
             return;
         }
 
-        if (suspeito.possuiContradicao(pista)) {
-            System.out.println("\nA evidência parece entrar em conflito com o depoimento do suspeito.");
-            System.out.println("Você desbloqueou uma pergunta especial!");
-        }
-
         int chance = 60
                 + investigador.getInvestigacao()
                 + pista.getImportancia()
@@ -181,7 +175,7 @@ public class Combate {
         System.out.println("\nVocê pergunta:");
         System.out.println(pistaEspecial.getPerguntaDesbloqueada());
 
-        System.out.println("\nRicardo fica em silêncio por alguns segundos...");
+        System.out.println("\n" + suspeito.getNome() + " fica em silêncio por alguns segundos...");
         System.out.println(suspeito.getContradicao());
 
         suspeito.diminuirResistencia(20);
@@ -207,7 +201,10 @@ public class Combate {
             System.out.println("O investigador venceu o interrogatório!");
             
             investigador.ganharExperiencia(XP_POR_VITORIA);
-            System.out.println("Exp: "+ XP_POR_VITORIA);
+
+            if (suspeito.getRecompensa() != null) {
+                suspeito.getRecompensa().entregar(investigador);
+            }
         } else {
             System.out.println("O interrogatório foi encerrado.");
             System.out.println("Não houve vencedor.");

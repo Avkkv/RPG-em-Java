@@ -1,18 +1,23 @@
 package com.mycompany.jogo.personagens;
 
+import com.mycompany.jogo.Habilidade;
 import com.mycompany.jogo.Pista;
 
 public class Investigador extends Personagem {
     private int investigacao;
     private int persuasao;
     private int observacao;
-    private int experiencia;
 
+    private int experiencia;
     private int proximoNivelXp = 100;
 
     private static final int MAX_PISTAS = 20;
     private Pista[] pistas; // O investigador possui um conjunto de objetos do tipo Pista
     private int quantidadePistas;
+
+    private static final int MAX_HABILIDADES = 10;
+    private Habilidade[] habilidades;
+    private int quantidadeHabilidades;
     
     public Investigador (String nome, int vida, int vidaMaxima, int nivel,
                         int ataque, int defesa, int investigacao,
@@ -27,6 +32,9 @@ public class Investigador extends Personagem {
         
         this.pistas = new Pista[MAX_PISTAS]; // Cria espaço para 20 referências a objetos Pista
         this.quantidadePistas = 0;
+
+        this.habilidades = new Habilidade[MAX_HABILIDADES];
+        this.quantidadeHabilidades = 0;
     }
     
     public int getInvestigacao() {
@@ -42,15 +50,34 @@ public class Investigador extends Personagem {
         return experiencia;
     }
     
-    public void ganharExperiencia(int experiencia) {
-        this.experiencia += experiencia;
+    public void ganharExperiencia(int experienciaGanha) {
+
+        if (experienciaGanha <= 0) return;
+
+        // Adiciona a experiência recebida
+        this.experiencia += experienciaGanha;
         
+        // Mostra quanto o jogador ganhou
+        System.out.println("\n*** +" + experienciaGanha + " EXP! ***");
+
+        boolean subiuNivel = false;
+
+        // Verifica se pode subir de nível
         while(this.experiencia >= this.proximoNivelXp){ // Verifica se o personagem ja pode subir de nivel com o xp ganho
             this.aumentarNivel();
             
-            this.experiencia = this.experiencia - proximoNivelXp; // remove a experiencia já utilizada para subior de nivel      
-            proximoNivelXp = proximoNivelXp + ((getNivel() / 2) *20); // almenta a experiencia necessaria para subir de nivel com base
-        }                                                             // no nivel almentando em 20, 20, 40, 40, 60, 60 ...
+            this.experiencia -= proximoNivelXp; // remove a experiencia já utilizada para subior de nivel      
+            proximoNivelXp = proximoNivelXp + ((getNivel() / 2) *20); // aumenta a experiencia necessaria para subir de nivel
+            subiuNivel = true;                                        // com base no nivel aumentando em 20, 20, 40, 40, 60, 60 ...
+        }
+        
+        // Mostra mensagem caso tenha subido de nível
+        if (subiuNivel) {
+            System.out.println("\n*** VOCÊ SUBIU PARA O NÍVEL " + getNivel() + "! ***");
+        }
+
+        // Mostra a experiência atual
+        System.out.println("EXP atual: " + experiencia + "/" + proximoNivelXp);
     }
 
     // Adiciona uma nova pista ao investigador
@@ -123,7 +150,86 @@ public class Investigador extends Personagem {
         System.out.println("Pista " + numero + " analisada com sucesso!");
         
         ganharExperiencia(pista.getImportancia() * XP_POR_ANALISE);
-        System.out.println("Exp: "+ XP_POR_ANALISE * pista.getImportancia());
-                
+    }
+
+    public int getQuantidadePistasAnalisadas() {
+
+        int quantidade = 0;
+
+        for (int i = 0; i < quantidadePistas; i++) {
+            if (pistas[i].isAnalisada()) {quantidade++;}
+        }
+
+        return quantidade;
+    }
+
+    public boolean possuiPistaAnalisada(int id) {
+
+        for (int i = 0; i < quantidadePistas; i++) {
+            if (pistas[i].getId() == id && pistas[i].isAnalisada()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int getProximoNivelXp() {
+        return proximoNivelXp;
+    }
+
+    public void mostrarProgresso() {
+
+        System.out.println("\n====== PROGRESSÃO DO INVESTIGADOR ======");
+        System.out.println("Nível: " + getNivel());
+        System.out.println("Experiência: " + experiencia + "/" + proximoNivelXp);
+        System.out.println("========================================");
+    }
+
+    @Override
+    public void aumentarNivel() {
+
+        super.aumentarNivel();
+
+        investigacao += 2;
+        persuasao += 2;
+        observacao += 2;
+    }
+
+    public void adicionarHabilidade(Habilidade habilidade) {
+
+        if (quantidadeHabilidades < MAX_HABILIDADES) {
+
+            habilidades[quantidadeHabilidades] = habilidade;
+            quantidadeHabilidades++;
+
+            investigacao += habilidade.getBonusInvestigacao();
+            persuasao += habilidade.getBonusPersuasao();
+            observacao += habilidade.getBonusObservacao();
+
+            System.out.println("\nNova habilidade desbloqueada: " + habilidade.getNome());
+            System.out.println(habilidade.getDescricao());
+
+        } else {
+            System.out.println("Você não pode carregar mais habilidades.");
+        }
+    }
+
+    public void mostrarHabilidades() {
+
+        if (quantidadeHabilidades == 0) {
+            System.out.println("\nVocê ainda não possui habilidades.");
+            return;
+        }
+
+        System.out.println("\n========== HABILIDADES ==========");
+
+        for (int i = 0; i < quantidadeHabilidades; i++) {
+
+            System.out.println("\n" + (i + 1) + " - " + habilidades[i].getNome());
+            System.out.println(habilidades[i].getDescricao());
+        }
+
+        System.out.println("=================================");
     }
 }

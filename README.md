@@ -10,7 +10,7 @@ Durante o jogo, o investigador encontra e analisa pistas, interage com suspeitos
 
 A proposta do jogo é fazer com que o jogador não apenas avance por combates, mas precise **interpretar informações e conectar pistas para descobrir a verdade por trás do Caso 47**.
 
-> **Observação:** funcionalidades como recompensas completas, conclusão do caso, sistema de dedução e múltiplos finais ainda serão desenvolvidas.
+> **Observação:** a história narrativa ainda pode ser expandida com novos locais, personagens e acontecimentos. A infraestrutura de recompensas, dedução, conclusão e múltiplos finais já foi implementada.
 
 ---
 
@@ -88,6 +88,9 @@ src/
 │   ├── Pista.java
 │   ├── Combate.java
 │   ├── Investigacao.java
+│   ├── Habilidade.java
+│   ├── Recompensa.java
+│   ├── Deducao.java
 │   └── Jogo.java
 │
 └── com.mycompany.jogo.personagens/
@@ -112,22 +115,31 @@ src/
             Pista
 
 Investigador -------- Combate -------- Suspeito
-       ^                  |
-       |                  |
-       |                utiliza
-       |                  |
-       |                  v
-       |                 Pista
-       |
+   |                    |              |
+   |                    |              |
+   |                  utiliza       possui
+   |                    |              |
+   v                    v              v
+ Pista  <----------- Evidências     Recompensa
+   |                                   |
+   |                                   v
+   |                              Habilidade
+   |
+   +--------- Deducao <--------- Suspeitos[]
+                |
+                v
+        Conclusão / Finais
+
   Investigacao
        |
        +---- controla locais
        +---- descobre pistas
        +---- controla progresso
        +---- controla menu
+       +---- controla suspeitos
 ```
 
-A classe `Personagem` serve como base para `Investigador` e `Suspeito`. A classe `Pista` é independente, mas pode ser armazenada pelo investigador e utilizada durante os interrogatórios. A classe `Investigacao` controla o fluxo do caso, os locais, o progresso e a descoberta das pistas. A classe `Combate` coordena o confronto entre investigador e suspeito.
+A classe `Personagem` serve como base para `Investigador` e `Suspeito`. A classe `Pista` é independente, mas pode ser armazenada pelo investigador e utilizada durante os interrogatórios. A classe `Investigacao` controla o fluxo do caso, os locais, o progresso, a descoberta das pistas e os três suspeitos. A classe `Combate` coordena o confronto entre investigador e suspeito. `Recompensa` e `Habilidade` cuidam da progressão obtida ao vencer interrogatórios, enquanto `Deducao` utiliza as evidências e os suspeitos para determinar a conclusão do caso.
 
 ---
 
@@ -135,7 +147,7 @@ A classe `Personagem` serve como base para `Investigador` e `Suspeito`. A classe
 
 O projeto deve ser executado pela classe `Jogo`.
 
-Atualmente, `Jogo` cria o `Scanner`, instancia o `Investigador`, o `Suspeito` e a `Investigacao`, e inicia a partida chamando `iniciar()` da investigação.
+Atualmente, `Jogo` cria o `Scanner`, solicita o nome do jogador, apresenta os objetivos, instancia o `Investigador` e a `Investigacao`, e inicia a partida chamando `iniciar()` da investigação. Os suspeitos são criados e administrados pela própria `Investigacao`.
 
 A partir desse ponto, o jogador controla o andamento do jogo pelo terminal.
 
@@ -210,12 +222,15 @@ Além dos atributos herdados, possui características próprias relacionadas à 
 investigacao    -> capacidade de trabalhar com evidências
 persuasao       -> capacidade de obter informações em interrogatórios
 observacao      -> capacidade de perceber detalhes e contradições
-experiencia     -> quantidade de experiência adquirida
+experiencia     -> quantidade de experiência acumulada pelo investigador
+proximoNivelXp  -> quantidade de experiência necessária para o próximo nível
 pistas[]        -> conjunto de pistas encontradas pelo investigador
-quantidadePistas -> quantidade atual de pistas armazenadas
+quantidadePistas   -> quantidade atual de pistas armazenadas
+habilidades[]      -> conjunto de habilidades conquistadas pelo investigador
+quantidadeHabilidades -> quantidade atual de habilidades armazenadas
 ```
 
-O investigador possui espaço para armazenar até 20 pistas.
+O investigador possui espaço para armazenar até 20 pistas e até 10 habilidades.
 
 ### Métodos
 
@@ -237,9 +252,32 @@ Localiza uma pista pelo número e chama o método de análise da pista.
 
 getPista(int numero):
 Retorna uma pista específica de acordo com o número escolhido.
+
+analisarPista(int numero):
+Analisa uma pista escolhida pelo jogador e concede experiência de acordo com a importância da pista.
+
+getQuantidadePistasAnalisadas():
+Retorna quantas pistas já foram analisadas.
+
+possuiPistaAnalisada(int id):
+Verifica se uma pista específica já foi analisada.
+
+getProximoNivelXp():
+Retorna a experiência necessária para atingir o próximo nível.
+
+mostrarProgresso():
+Exibe nível e experiência atual do investigador.
+
+adicionarHabilidade(Habilidade habilidade):
+Adiciona uma habilidade recebida como recompensa e aplica seus bônus aos atributos de investigação.
+
+mostrarHabilidades():
+Exibe as habilidades conquistadas pelo investigador.
 ```
 
 Como herda de `Personagem`, também possui acesso aos métodos como `atacar()`, `receberDano()`, `estaVivo()` e `aumentarNivel()`.
+
+Ao subir de nível, o `Investigador` também aumenta seus atributos específicos de investigação (`investigacao`, `persuasao` e `observacao`). A experiência excedente permanece acumulada para o próximo nível.
 
 ---
 
@@ -264,7 +302,11 @@ profissao       -> profissão ou ocupação do suspeito
 depoimento      -> declaração dada pelo suspeito
 resistencia     -> representa quanto o suspeito consegue resistir ao interrogatório
 inteligencia    -> influencia a dificuldade das ações do investigador
-culpado         -> informa internamente se o suspeito é culpado no caso
+culpado             -> informa internamente se o suspeito é culpado no caso
+pistaContradicaoId  -> identifica a pista que pode gerar uma contradição específica
+contradicao         -> texto da contradição associada à evidência
+motivo              -> motivo associado ao suspeito para a etapa de dedução
+recompensa          -> recompensa recebida quando o interrogatório é vencido
 ```
 
 O atributo `culpado` é uma informação interna do jogo. O objetivo é que o jogador descubra a responsabilidade do suspeito por meio das pistas e dos interrogatórios.
@@ -281,6 +323,12 @@ Métodos utilizados para consultar os atributos do suspeito.
 
 diminuirResistencia(int valor):
 Diminui a resistência durante o interrogatório.
+
+getMotivo():
+Retorna o motivo associado ao suspeito.
+
+getRecompensa():
+Retorna a recompensa associada ao suspeito.
 ```
 
 ---
@@ -302,7 +350,9 @@ id           -> identificador da pista
 descricao    -> descrição da evidência encontrada
 tipo         -> categoria da pista
 importancia  -> nível de relevância da pista
-analisada    -> informa se a pista já foi analisada
+analisada             -> informa se a pista já foi analisada
+informacaoRevelada    -> informação descoberta após a análise
+perguntaDesbloqueada  -> pergunta especial que pode ser liberada pela pista
 ```
 
 Alguns exemplos de tipos de pista são:
@@ -327,7 +377,7 @@ Exibe todas as informações da pista.
 
 Além disso, a classe possui getters para seus atributos.
 
-Uma pista é criada inicialmente como **não analisada**. O jogador pode escolher a opção de análise no menu de investigação; depois disso, a pista pode ser apresentada como evidência durante um interrogatório.
+Uma pista é criada inicialmente como **não analisada**. O jogador pode escolher a opção de análise no menu de investigação. A análise revela uma informação narrativa e pode desbloquear uma pergunta especial; depois disso, a pista pode ser apresentada como evidência durante um interrogatório.
 
 ---
 
@@ -348,6 +398,8 @@ locais[]                     -> locais disponíveis para investigação
 locaisInvestigados[]         -> indica quais locais já foram investigados
 quantidadeLocaisInvestigados -> quantidade de locais já investigados
 casoResolvido                -> informa se o caso foi marcado como resolvido
+suspeitos[]                  -> conjunto de suspeitos do caso
+quantidadeSuspeitos          -> quantidade de suspeitos cadastrados
 ```
 
 ### Métodos
@@ -360,7 +412,8 @@ mostrarLocais():
 Exibe os locais disponíveis e indica quais já foram investigados.
 
 investigarLocal(int numeroLocal, Investigador investigador):
-Investiga o local selecionado, impede investigação repetida e cria a pista correspondente.
+Investiga o local selecionado, impede investigação repetida, cria a pista correspondente
+e concede experiência ao investigador.
 
 criarPistaDoLocal(...):
 Cria a pista associada ao local investigado e a adiciona ao investigador.
@@ -371,8 +424,19 @@ Atualiza o percentual de locais investigados.
 resolverCaso():
 Marca o caso como resolvido e define o progresso como 100%.
 
-iniciar(Investigador investigador, Suspeito suspeito, Scanner scanner):
-Controla o menu principal da investigação e permite ao jogador investigar locais, consultar e analisar pistas, acompanhar o progresso e iniciar interrogatórios.
+iniciar(Investigador investigador, Scanner scanner):
+Controla o menu principal da investigação e permite ao jogador investigar locais,
+consultar e analisar pistas, acompanhar o progresso, selecionar suspeitos,
+concluir o caso e iniciar interrogatórios.
+
+getSuspeito(int numero):
+Retorna um suspeito específico de acordo com o número escolhido.
+
+getQuantidadeSuspeitos():
+Retorna a quantidade de suspeitos cadastrados.
+
+mostrarSuspeitos():
+Exibe no terminal os suspeitos disponíveis para interrogatório.
 ```
 
 ### Menu de investigação
@@ -383,14 +447,100 @@ Controla o menu principal da investigação e permite ao jogador investigar loca
 3 - Analisar uma pista
 4 - Ver progresso
 5 - Interrogar suspeito
-6 - Sair
+6 - Ver habilidades
+7 - Concluir caso
+8 - Sair
 ```
 
 A classe `Investigacao` utiliza o mesmo `Scanner` recebido pelo método `iniciar()` e o repassa para `Combate`.
 
 ---
 
-## 6. Combate
+## 6. Habilidade
+
+**Arquivo:** `Habilidade.java`
+
+**Pacote:** `com.mycompany.jogo`
+
+`Habilidade` representa uma habilidade que pode ser conquistada pelo investigador como parte das recompensas dos interrogatórios. Cada habilidade possui uma descrição e bônus específicos para os atributos de investigação.
+
+### Atributos
+
+```text
+nome                 -> nome da habilidade
+descricao            -> descrição do efeito da habilidade
+bonusInvestigacao    -> bônus aplicado à investigação
+bonusPersuasao       -> bônus aplicado à persuasão
+bonusObservacao      -> bônus aplicado à observação
+```
+
+---
+
+## 7. Recompensa
+
+**Arquivo:** `Recompensa.java`
+
+**Pacote:** `com.mycompany.jogo`
+
+`Recompensa` representa o conjunto de benefícios concedidos ao investigador após vencer um interrogatório. Ela pode conceder experiência e uma habilidade.
+
+### Atributos
+
+```text
+descricao   -> descrição da recompensa
+experiencia -> quantidade de EXP concedida
+habilidade  -> habilidade associada à recompensa, quando houver
+```
+
+### Métodos
+
+```text
+getDescricao():
+Retorna a descrição da recompensa.
+
+getExperiencia():
+Retorna a experiência da recompensa.
+
+getHabilidade():
+Retorna a habilidade associada.
+
+entregar(Investigador investigador):
+Entrega a recompensa ao investigador, concedendo EXP e habilidade quando configuradas.
+```
+
+Cada suspeito pode possuir uma recompensa diferente.
+
+---
+
+## 8. Deducao
+
+**Arquivo:** `Deducao.java`
+
+**Pacote:** `com.mycompany.jogo`
+
+`Deducao` controla a etapa de conclusão do Caso 47. O jogador escolhe qual suspeito considera responsável e qual seria o motivo, e o sistema verifica essas escolhas com base nas informações cadastradas e nas evidências analisadas.
+
+### Estados de resultado
+
+```text
+INCONCLUSIVO     -> evidências insuficientes ou conclusão não sustentada
+ACUSACAO_ERRADA  -> suspeito escolhido não é o responsável
+VERDADE_REVELADA -> suspeito e motivo corretos, com evidências suficientes
+FINAL_SECRETO    -> conclusão correta com todas as pistas disponíveis analisadas
+```
+
+### Métodos
+
+```text
+realizar(Scanner scanner):
+Conduz a etapa de dedução, solicita as escolhas do jogador e retorna o resultado da conclusão.
+```
+
+A dedução exige um número mínimo de pistas analisadas antes que o jogador possa chegar a uma conclusão. O resultado pode levar a diferentes finais do jogo.
+
+---
+
+## 9. Combate
 
 **Arquivo:** `Combate.java`
 
@@ -405,9 +555,11 @@ Essa abordagem utiliza a liberdade proposta no trabalho para implementar combate
 ```text
 investigador  -> personagem controlado pelo jogador
 suspeito      -> personagem que está sendo interrogado
+pistaEspecial -> pista que desbloqueou uma pergunta especial
 rodada        -> número do turno atual
 combateAtivo  -> informa se o interrogatório ainda está acontecendo
 random        -> objeto utilizado para gerar aleatoriedade
+scanner       -> entrada utilizada pelo jogador durante o interrogatório
 ```
 
 ### Ações de combate
@@ -417,6 +569,7 @@ questionar();
 pressionar();
 observar();
 apresentarPista(Pista pista);
+fazerPerguntaEspecial();
 ```
 
 ### Métodos auxiliares
@@ -451,7 +604,8 @@ A cada rodada, o jogador escolhe uma ação:
 2 - Pressionar
 3 - Observar
 4 - Apresentar pista
-5 - Sair
+5 - Fazer pergunta especial (quando desbloqueada)
+6 - Sair
 ```
 
 ## Questionar
@@ -502,6 +656,8 @@ O investigador escolhe uma pista que possui.
 
 A pista precisa estar analisada para poder ser utilizada como evidência.
 
+Quando uma pista corresponde à contradição específica do suspeito e a apresentação tem sucesso, uma pergunta especial é desbloqueada.
+
 A chance de sucesso considera:
 
 ```text
@@ -509,6 +665,12 @@ investigação do investigador + importância da pista - inteligência do suspei
 ```
 
 O resultado também utiliza `Random`.
+
+## Pergunta especial
+
+Uma pergunta especial é desbloqueada quando o jogador apresenta com sucesso uma pista que possui uma contradição associada ao suspeito. A pergunta utiliza a informação desbloqueada pela pista para pressionar o suspeito e reduzir sua resistência.
+
+A pergunta permanece disponível durante o interrogatório por meio de uma opção adicional no menu.
 
 ---
 
@@ -618,7 +780,31 @@ Vitórias / progresso
 Melhoria dos atributos
 ```
 
-O sistema completo de experiência, recompensas e progressão narrativa ainda será expandido.
+A experiência é centralizada no `Investigador`. Ao atingir o limite do próximo nível, o investigador sobe de nível, mantém a experiência excedente e melhora seus atributos. A evolução também é aplicada aos atributos específicos de investigação.
+
+---
+
+# Sistema de Recompensas
+
+Ao vencer um interrogatório, o investigador recebe a experiência da vitória e pode receber uma recompensa específica do suspeito derrotado. A recompensa pode conter experiência adicional e uma habilidade.
+
+O fluxo é:
+
+```text
+Vencer interrogatório
+        ↓
+Experiência da vitória
+        ↓
+Recompensa do suspeito
+        ↓
++ EXP adicional
+        ↓
+Nova habilidade
+        ↓
+Bônus nos atributos do Investigador
+```
+
+As habilidades conquistadas ficam armazenadas no investigador e podem ser consultadas pelo menu do jogo.
 
 ---
 
@@ -628,7 +814,7 @@ A história do jogo gira em torno do misterioso **Caso 47**.
 
 O jogador recebe a missão de investigar um caso antigo que foi arquivado e começa a encontrar evidências que colocam diferentes pessoas sob suspeita.
 
-A investigação será construída em etapas, envolvendo:
+A investigação é construída em etapas e atualmente envolve três suspeitos principais: Ricardo, Helena e Marcos. A estrutura narrativa envolve:
 
 ```text
 Local de investigação
@@ -663,9 +849,9 @@ O jogador não depende apenas de força ou ataque. Ele precisa:
 - identificar contradições;
 - conectar informações obtidas de diferentes personagens.
 
-Uma mecânica planejada para a versão final é o **sistema de dedução**, no qual o jogador deverá formular uma teoria sobre o caso com base nas pistas coletadas.
+A versão atual já possui o **sistema de dedução**, no qual o jogador escolhe o suspeito e o motivo e o jogo verifica se as evidências analisadas sustentam a conclusão.
 
-Também está prevista a possibilidade de diferentes finais de acordo com as evidências e decisões tomadas durante a investigação.
+O sistema também possui diferentes resultados para a conclusão: acusação errada, caso inconclusivo, verdade revelada e um final secreto quando todas as pistas disponíveis são analisadas.
 
 ---
 
@@ -690,10 +876,44 @@ A versão atual já permite um primeiro ciclo de investigação:
         ↓
 8. Apresentar uma pista analisada
         ↓
-9. Encerrar o interrogatório
+9. Desbloquear pergunta especial (quando aplicável)
         ↓
-10. Voltar ao menu de investigação
+10. Utilizar a pergunta especial (quando disponível)
+        ↓
+11. Encerrar o interrogatório
+        ↓
+12. Receber EXP/recompensa em caso de vitória
+        ↓
+13. Consultar progresso e habilidades
+        ↓
+14. Concluir o caso por meio da dedução
+        ↓
+15. Receber um dos finais possíveis
 ```
+
+# Sistema de Experiência
+
+O investigador pode ganhar experiência em três momentos da versão atual:
+
+```text
+Investigar um local
+        ↓
++30 EXP
+
+Analisar uma pista
+        ↓
+Importância da pista × 5 EXP
+
+Vencer um interrogatório
+        ↓
++15 EXP
+```
+
+A experiência é acumulada pelo `Investigador`. Ao atingir a quantidade necessária para o próximo nível, o personagem sobe de nível. A experiência que exceder o limite permanece acumulada para o próximo nível.
+
+Ao subir de nível, os atributos básicos e os atributos específicos do investigador são melhorados. O sistema também informa no terminal a quantidade de EXP recebida, a EXP atual e a ocorrência de uma nova subida de nível.
+
+---
 
 # Estado Atual do Projeto
 
@@ -715,10 +935,18 @@ Até o momento, já foram estruturadas as seguintes partes:
 [✓] Investigação de locais
 [✓] Descoberta automática de pistas durante a investigação
 [✓] Análise de pistas
-[ ] Recompensas
-[ ] Sistema completo de experiência e níveis
-[ ] História completa
-[ ] Sistema de dedução
-[ ] Conclusão do caso
-[ ] Múltiplos finais
+[✓] Informações reveladas após análise de pistas
+[✓] Perguntas especiais desbloqueadas por evidências
+[✓] Sistema de experiência por investigação, análise e vitória
+[✓] Sistema de níveis do Investigador
+[✓] Evolução dos atributos do Investigador
+[✓] Classe Habilidade
+[✓] Classe Recompensa
+[✓] Recompensas associadas aos suspeitos
+[✓] Três suspeitos controlados pela Investigacao
+[✓] Classe Deducao
+[✓] Conclusão do caso
+[✓] Múltiplos resultados/finais
+[ ] História narrativa completa e expansão dos locais/personagens
+[ ] Ajustes finais de balanceamento e polimento
 ```
