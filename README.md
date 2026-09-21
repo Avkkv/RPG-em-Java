@@ -2,15 +2,15 @@
 
 ## Resumo
 
-**O Caso 47** é um RPG investigativo desenvolvido em Java para ser executado pelo terminal.
+O Caso 47 é um RPG investigativo ambientado em uma investigação criminal na qual o jogador assume o papel de um investigador responsável por descobrir a verdade por trás de uma série de acontecimentos suspeitos.
 
-O jogador assume o papel de um investigador responsável por solucionar um caso misterioso. Em vez de utilizar apenas combates físicos, o jogo utiliza **interrogatórios, investigação e apresentação de evidências** como principal forma de confronto. O andamento da investigação é controlado diretamente pelo jogador através de um menu no terminal.
+O caso começa após uma denúncia envolvendo o desaparecimento de documentos e possíveis irregularidades financeiras relacionadas a uma empresa. Na noite em que os acontecimentos ocorreram, existem registros de movimentações suspeitas, alterações em documentos e informações que não coincidem com os depoimentos das pessoas envolvidas. Um detalhe chama a atenção desde o início: o horário 23:47 aparece repetidamente em diferentes evidências.
 
-Durante o jogo, o investigador encontra e analisa pistas, interage com suspeitos e utiliza seus atributos para aumentar suas chances de sucesso durante os interrogatórios. O sistema de combate utiliza o `Random` para introduzir aleatoriedade nos resultados.
+Ao longo da investigação, o jogador visita diferentes locais, encontra pistas e precisa analisá-las para descobrir informações ocultas. Essas informações são utilizadas durante os interrogatórios, nos quais o investigador pode questionar, pressionar, observar o comportamento dos suspeitos e apresentar evidências capazes de colocá-los em contradição.
 
-A proposta do jogo é fazer com que o jogador não apenas avance por combates, mas precise **interpretar informações e conectar pistas para descobrir a verdade por trás do Caso 47**.
+O caso envolve quatro suspeitos principais: Ricardo, empresário ligado às movimentações financeiras; Helena, jornalista que investigava a empresa; Marcos, ex-policial relacionado à investigação anterior; e Beatriz, contadora que possui conhecimento sobre os documentos financeiros. Cada personagem possui seu próprio depoimento, comportamento, contradições e motivo para esconder determinadas informações.
 
-> **Observação:** a história narrativa ainda pode ser expandida com novos locais, personagens e acontecimentos. A infraestrutura de recompensas, dedução, conclusão e múltiplos finais já foi implementada.
+Embora todos tenham algum envolvimento com o caso, nem todos são culpados. O jogador precisa separar as mentiras relacionadas a interesses pessoais daquelas que escondem a verdadeira origem do crime.
 
 ---
 
@@ -808,34 +808,6 @@ As habilidades conquistadas ficam armazenadas no investigador e podem ser consul
 
 ---
 
-# História e Estrutura Narrativa
-
-A história do jogo gira em torno do misterioso **Caso 47**.
-
-O jogador recebe a missão de investigar um caso antigo que foi arquivado e começa a encontrar evidências que colocam diferentes pessoas sob suspeita.
-
-A investigação é construída em etapas e atualmente envolve três suspeitos principais: Ricardo, Helena e Marcos. A estrutura narrativa envolve:
-
-```text
-Local de investigação
-        ↓
-Testemunhas
-        ↓
-Pistas
-        ↓
-Suspeitos
-        ↓
-Interrogatórios
-        ↓
-Conexão entre evidências
-        ↓
-Conclusão do caso
-```
-
-O significado definitivo do número **47** ainda faz parte da construção da história. Uma das possibilidades é que o caso seja oficialmente o **47º caso arquivado** de determinado período. Outra possibilidade é que o número apareça repetidamente em diferentes evidências e tenha um significado maior dentro da trama.
-
----
-
 # Diferencial do Jogo
 
 O principal diferencial de **O Caso 47** é substituir o combate tradicional por **interrogatórios e dedução**.
@@ -849,7 +821,7 @@ O jogador não depende apenas de força ou ataque. Ele precisa:
 - identificar contradições;
 - conectar informações obtidas de diferentes personagens.
 
-A versão atual já possui o **sistema de dedução**, no qual o jogador escolhe o suspeito e o motivo e o jogo verifica se as evidências analisadas sustentam a conclusão.
+O jogo possui o **sistema de dedução**, no qual o jogador escolhe o suspeito e o motivo e o jogo verifica se as evidências analisadas sustentam a conclusão.
 
 O sistema também possui diferentes resultados para a conclusão: acusação errada, caso inconclusivo, verdade revelada e um final secreto quando todas as pistas disponíveis são analisadas.
 
@@ -914,39 +886,3 @@ A experiência é acumulada pelo `Investigador`. Ao atingir a quantidade necess�
 Ao subir de nível, os atributos básicos e os atributos específicos do investigador são melhorados. O sistema também informa no terminal a quantidade de EXP recebida, a EXP atual e a ocorrência de uma nova subida de nível.
 
 ---
-
-# Estado Atual do Projeto
-
-Até o momento, já foram estruturadas as seguintes partes:
-
-```text
-[✓] Classe Personagem
-[✓] Herança para Investigador
-[✓] Herança para Suspeito
-[✓] Classe Pista
-[✓] Inventário de pistas do Investigador
-[✓] Classe Combate
-[✓] Combate por interrogatório
-[✓] Sistema de ações
-[✓] Uso de Random
-[✓] Resistência do Suspeito
-[✓] Uso de pistas no interrogatório
-[✓] Menu de investigação pelo terminal
-[✓] Investigação de locais
-[✓] Descoberta automática de pistas durante a investigação
-[✓] Análise de pistas
-[✓] Informações reveladas após análise de pistas
-[✓] Perguntas especiais desbloqueadas por evidências
-[✓] Sistema de experiência por investigação, análise e vitória
-[✓] Sistema de níveis do Investigador
-[✓] Evolução dos atributos do Investigador
-[✓] Classe Habilidade
-[✓] Classe Recompensa
-[✓] Recompensas associadas aos suspeitos
-[✓] Três suspeitos controlados pela Investigacao
-[✓] Classe Deducao
-[✓] Conclusão do caso
-[✓] Múltiplos resultados/finais
-[ ] História narrativa completa e expansão dos locais/personagens
-[ ] Ajustes finais de balanceamento e polimento
-```
