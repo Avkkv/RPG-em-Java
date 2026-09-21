@@ -1,7 +1,6 @@
 package com.mycompany.jogo;
 
 import com.mycompany.jogo.personagens.Investigador;
-import com.mycompany.jogo.personagens.Suspeito;
 
 import java.util.Scanner;
 
@@ -16,9 +15,10 @@ public class Jogo {
         System.out.println("            O CASO 47");
         System.out.println("========================================");
 
-        System.out.println("\nVocê foi chamado para investigar um caso misterioso.");
-        System.out.println("Este caso foi arquivado há alguns anos, mas novas evidências surgiram recentemente.");
-        System.out.println("Então, agora você é o Investigador que vai resolver este mistério!");
+        System.out.println("\nUma denúncia anônima chegou até a delegacia.");
+        System.out.println("Documentos financeiros desapareceram.");
+        System.out.println("Uma movimentação suspeita aconteceu às 23:47.");
+        System.out.println("Quatro pessoas possuem alguma ligação com o caso.");
 
         // Nome do Investigador (Usuário)
         String nomeInvestigador;
@@ -41,10 +41,9 @@ public class Jogo {
         System.out.println("            OBJETIVOS");
         System.out.println("========================================");
 
-        System.out.println("- Explorar locais que possuam pistas");
-        System.out.println("- Encontrar e analisar essas pistas");
-        System.out.println("- Interrogar suspeitos");
-        System.out.println("- Descobrir a verdade por trás do caso");
+        System.out.println("- Descobrir quem está mentindo,");
+        System.out.println("- Reunir as evidências");
+        System.out.println("- Descobrir a verdade por trás do Caso 47.");
 
         System.out.println("========================================");
 

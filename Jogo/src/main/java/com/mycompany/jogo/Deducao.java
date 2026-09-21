@@ -51,9 +51,9 @@ public class Deducao {
 
         System.out.println("\nQual foi o motivo?");
         System.out.println("1 - Vingança");
-        System.out.println("2 - Dinheiro");
-        System.out.println("3 - Encobrir erros da investigação");
-        System.out.println("4 - Encobrir um esquema financeiro");
+        System.out.println("2 - Encobrir erros da investigação");
+        System.out.println("3 - Encobrir um esquema financeiro");
+        System.out.println("4 - Medo de perder o emprego");
 
         System.out.print("\nEscolha: ");
         int escolhaMotivo = scanner.nextInt();
@@ -65,13 +65,13 @@ public class Deducao {
                 motivoEscolhido = "Vingança";
                 break;
             case 2:
-                motivoEscolhido = "Dinheiro";
-                break;
-            case 3:
                 motivoEscolhido = "Encobrir erros da investigação";
                 break;
-            case 4:
+            case 3:
                 motivoEscolhido = "Encobrir um esquema financeiro";
+                break;
+            case 4:
+                motivoEscolhido = "Medo de perder o emprego";
                 break;
             default:
                 System.out.println("Opção de motivo inválida.");

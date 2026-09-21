@@ -17,7 +17,7 @@ public class Investigacao {
 
     private Historia historia;
 
-    private static final int MAX_SUSPEITOS = 3;
+    private static final int MAX_SUSPEITOS = 4;
     private Suspeito[] suspeitos;
     private int quantidadeSuspeitos;
 
@@ -29,7 +29,9 @@ public class Investigacao {
         this.locais = new String[]{
             "Delegacia",
             "Posto Central",
-            "Estação Abandonada"
+            "Estação Abandonada",
+            "Arquivo da Ferrovia",
+            "Escritório da Empresa"
         };
 
         this.locaisInvestigados = new boolean[locais.length];
@@ -128,15 +130,25 @@ public class Investigacao {
         interrogatorioAvancado
     );
 
+    // Habilidade e Recompensa por interrogar Beatriz
+    Habilidade analiseDocumentos = new Habilidade(
+        "Análise de Documentos",
+        "Facilita a interpretação de evidências.",
+        3,
+        0,
+        2
+    );
+    Recompensa recompensaBeatriz = new Recompensa(
+        "Beatriz revela informações sobre as movimentações financeiras da empresa.",
+        30,
+        analiseDocumentos
+    );
+
     private void criarSuspeitos() {
 
         suspeitos[0] = new Suspeito(
                 "Ricardo",
-                80,
-                80,
-                1,
-                15,
-                8,
+                80, 80, 1, 15, 8,
                 "Empresário",
                 "Eu nunca estive naquela estação.",
                 60,
@@ -152,20 +164,14 @@ public class Investigacao {
         quantidadeSuspeitos++;
 
         suspeitos[1] = new Suspeito(
-                "Helena",
-                70,
-                70,
-                1,
-                12,
-                7,
+                "Helena", 70, 70, 1, 12, 7,
                 "Jornalista",
                 "Eu não tinha qualquer relação com a vítima.",
                 50,
                 60,
                 false,
                 2,
-                "O recibo contradiz parte do seu depoimento sobre "
-                + "onde você estava naquela noite.",
+                "O recibo contradiz parte do seu depoimento sobre onde você estava naquela noite.",
                 "Vingança",
                 recompensaHelena
         );
@@ -173,22 +179,32 @@ public class Investigacao {
         quantidadeSuspeitos++;
 
         suspeitos[2] = new Suspeito(
-                "Marcos",
-                90,
-                90,
-                2,
-                18,
-                10,
+                "Marcos", 90, 90, 2, 18, 10,
                 "Ex-policial",
                 "A investigação original foi conduzida corretamente.",
                 70,
                 80,
                 false,
                 1,
-                "O documento da delegacia mostra que partes "
-                + "do relatório original foram omitidas.",
+                "O documento da delegacia mostra que partes do relatório original foram omitidas.",
                 "Encobrir erros da investigação",
                 recompensaMarcos
+        );
+
+        quantidadeSuspeitos++;
+
+        suspeitos[3] = new Suspeito(
+            "Beatriz",
+            85, 85, 1, 14, 8,
+            "Contadora",
+            "Eu não sabia de nenhuma transferência irregular.",
+            50,
+            13,
+            false,
+            5,
+            "Os documentos financeiros mostram que Beatriz conhecia a movimentação.",
+            "Medo de perder o emprego",
+            recompensaBeatriz
         );
 
         quantidadeSuspeitos++;
@@ -274,7 +290,6 @@ public class Investigacao {
                 break;
 
             case 2:
-
                 pista = new Pista(
                     3,
                     "Fotografia mostrando uma pessoa próxima à estação.",
@@ -286,6 +301,28 @@ public class Investigacao {
                 );
 
                 break;
+
+            case 3:
+                pista = new Pista(
+                    4,
+                    "Registro eletrônico de entrada no arquivo.",
+                    "Documento",
+                    8,
+                    "O registro mostra que um cartão de acesso foi utilizado às 23:47 para consultar documentos antigos do caso.",
+                    "Por que alguém procuraria documentos do caso justamente às 23:47?"
+                );
+
+                break;
+
+            case 4:
+                pista = new Pista(
+                    5,
+                    "Planilha financeira com uma transferência suspeita.",
+                    "Documento",
+                    10,
+                    "Uma grande quantia foi transferida para uma empresa ligada indiretamente a Ricardo. A operação foi registrada em um documento identificado pelo número 47.",
+                    "Quem autorizou a transferência?"
+                );
         }
 
         if (pista != null) {
@@ -326,13 +363,39 @@ public class Investigacao {
                 break;
             case Deducao.FINAL_SECRETO:
                 System.out.println("FINAL SECRETO!");
-                System.out.println("Você descobriu a verdade e também o segredo por trás do número 47!");
+                System.out.println("""
+                        Depois de juntar as evidências, os depoimentos finalmente começam a fazer sentido.
+
+                        A fotografia da estação, os registros de movimentação e os documentos financeiros mostram que Ricardo estava por trás do esquema. Ele utilizava a empresa para realizar transferências irregulares e, quando percebeu que algumas informações poderiam ser descobertas, tentou apagar os rastros e manipular documentos da investigação.
+                        Os outros suspeitos tinham motivos para esconder informações, mas suas mentiras estavam ligadas aos próprios interesses. Nenhum deles era responsável pelo esquema.
+                        Ricardo, porém, não conseguiu explicar as contradições apresentadas durante o interrogatório.
+
+                        O caso está encerrado.
+                        A verdade por trás do Caso 47 foi finalmente revelada.
+
+                        Mas, enquanto você guarda as últimas evidências, uma pergunta permanece em sua mente:
+                        Por que o número 47 aparece tantas vezes nos documentos?
+                    """
+                );
                 resolverCaso();
 
                 break;
             case Deducao.INCONCLUSIVO:
                 System.out.println("CASO INCONCLUSIVO");
-                System.out.println("As evidências ainda não são suficientes.");
+                System.out.println("""
+                        Você não se contentou em descobrir apenas quem era o culpado.
+
+                        Ao analisar todas as evidências, percebeu que o número 47 aparecia em horários, documentos e registros que, isoladamente, pareciam simples coincidências. Mas não eram.
+                        O Caso 47 não recebeu esse número apenas por ser o 47º caso arquivado. 47 era também o código utilizado para identificar uma investigação anterior, uma investigação que terminou sem respostas e cujos documentos haviam sido deliberadamente escondidos.
+                        As alterações encontradas nos arquivos, os registros das 23:47 e a movimentação financeira revelam que o esquema descoberto agora não começou naquela noite. Ele já vinha sendo encoberto havia anos.
+
+                        Ricardo não estava apenas tentando esconder um crime recente. Ele estava tentando impedir que alguém descobrisse o que realmente aconteceu no antigo Caso 47.
+                        Entre os documentos recuperados, você encontra uma última página. Nela, existe apenas uma anotação: “Se você chegou até aqui, significa que o Caso 47 nunca foi realmente encerrado.”
+                        Você encara o documento por alguns segundos. Agora sabe quem é o culpado. Mas também descobriu que o caso que investigava era apenas a ponta de algo muito maior.
+
+                        Você descobriu a verdade.
+                    """
+                );
                 break;
         }
 

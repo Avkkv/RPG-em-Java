@@ -1,7 +1,5 @@
 package com.mycompany.jogo;
 
-import com.mycompany.jogo.personagens.Investigador;
-
 public class Habilidade {
     private String nome;
     private String descricao;
